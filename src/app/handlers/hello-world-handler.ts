@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import { BaseHandler } from './base-handler';
 
-export class HelloWorldHandler {
+export class HelloWorldHandler extends BaseHandler {
 	path = "/";
 	
 	get(request: Request, response: Response, next: NextFunction) {

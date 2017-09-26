@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
-import { HelloWorldHandler } from './hello-world-handler';
+import { HelloWorldHandler } from './handlers/hello-world-handler';
 
 export class App {
 	private static instance: App = new App();
