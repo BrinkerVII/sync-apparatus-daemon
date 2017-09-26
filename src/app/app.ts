@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
 import { HelloWorldHandler } from './handlers/hello-world-handler';
+import { EventHandler } from './handlers/event-handler';
 
 export class App {
 	private static instance: App = new App();
@@ -34,7 +35,10 @@ export class App {
 	private setupRoutes() {
 		let router = express.Router();
 
-		let routeHandlers: any[] = [new HelloWorldHandler()];
+		let routeHandlers: any[] = [
+			new HelloWorldHandler(),
+			new EventHandler()
+		];
 		
 		for (let handler of routeHandlers) {
 			if (typeof handler.path === "string") {

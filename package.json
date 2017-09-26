@@ -5,12 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp build-all",
-    "dev-server": "better-npm-run dev-server"
+    "build": "gulp clean && gulp build-all",
+    "dev-server": "gulp clean && better-npm-run dev-server",
+    "run-debug": "npm run build && better-npm-run run-debug"
   },
   "betterScripts": {
     "dev-server": {
       "command": "concurrently \"gulp watch\" \"nodemon dist/index.js\" -n \"BUILD,SERVER\"",
+      "env": {
+        "DEBUG": "ts-express"
+      }
+    },
+    "run-debug": {
+      "command": "node ./dist/index.js",
       "env": {
         "DEBUG": "ts-express"
       }
@@ -32,9 +39,11 @@
     "@types/express": "^4.0.37",
     "@types/morgan": "^1.7.33",
     "@types/node": "^8.0.31",
+    "@types/uuid": "^3.4.2",
     "better-npm-run": "^0.1.0",
     "concurrently": "^3.5.0",
     "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
     "gulp-typescript": "^3.2.2",
     "nodemon": "^1.12.1",
     "typescript": "^2.5.2"
@@ -43,6 +52,7 @@
     "body-parser": "^1.18.2",
     "debug": "^3.0.1",
     "express": "^4.15.5",
-    "morgan": "^1.8.2"
+    "morgan": "^1.8.2",
+    "uuid": "^3.1.0"
   }
 }

@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const clean = require('gulp-clean');
 const typescript = require('gulp-typescript');
 const JSON_FILES = ['src/*.json', 'src/**/*.json'];
 
@@ -22,5 +23,11 @@ gulp.task("watch", ["build"], () => {
 	gulp.watch("src/**/*.ts", ["build"]);
 });
 
+gulp.task("clean", () => {
+	return gulp.src("dist", {
+			read: false
+		})
+		.pipe(clean());
+});
 
-gulp.task("default", ["build-all"]);
+gulp.task("default", ["clean", "build-all"]);
