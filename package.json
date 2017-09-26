@@ -1,0 +1,19 @@
+{
+  "name": "sync-apparatus-daemon",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrinkerVII/sync-apparatus-daemon.git"
+  },
+  "author": "BrinkerVII",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/BrinkerVII/sync-apparatus-daemon/issues"
+  },
+  "homepage": "https://github.com/BrinkerVII/sync-apparatus-daemon#readme"
+}
