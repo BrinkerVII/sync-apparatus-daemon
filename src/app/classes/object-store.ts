@@ -47,7 +47,7 @@ export class ObjectStore {
 		return new Promise((resolve, reject) => {
 			this.connection.get("SELECT content file from object WHERE path = ?", path)
 				.then(result => {
-					resolve(result);
+					resolve(result.content);
 				})
 				.catch(err => reject(err));
 		});
