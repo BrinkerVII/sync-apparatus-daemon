@@ -6,7 +6,7 @@ import { EVENT_TYPES } from '../constants/event-types';
 let handlerFunctions = {};
 
 handlerFunctions[EVENT_TYPES.PUSH_FILE] = (event: SyncEvent) => {
-	
+
 };
 
 export class EventHandler extends BaseHandler {
@@ -17,7 +17,7 @@ export class EventHandler extends BaseHandler {
 
 		if (events.forEach) { // Determines if the post body really is an array
 			events.forEach(event => {
-				if (typeof event.type === "string") {
+				if (SyncEvent.isSane(event)) {
 					let f: Function = handlerFunctions[event.type];
 					if (f) { f(event); }
 				}
