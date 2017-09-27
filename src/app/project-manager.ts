@@ -2,6 +2,8 @@ import { Variables } from './variables';
 import { Project } from './classes/project';
 import * as debug from 'debug';
 
+let d = debug("sync-apparatus:project-manager");
+
 export class ProjectManager {
 	private static instance: ProjectManager = new ProjectManager();
 	public static getInstance(): ProjectManager {
@@ -23,7 +25,7 @@ export class ProjectManager {
 	public addProject(name: string): Promise<Project> {
 		return new Promise<Project>((resolve, reject) => {
 			if (this.projectExists(name)) {
-				debug("Project exists, ignoring");
+				d("Project exists, ignoring");
 				return reject(new Error("Project exists"));
 			}
 
@@ -44,7 +46,7 @@ export class ProjectManager {
 			for (let existingProject of this.projects) {
 				if (existingProject.getName() === name) {
 					project = existingProject;
-					return;
+					break;
 				}
 			}
 
