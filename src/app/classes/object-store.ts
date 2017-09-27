@@ -35,10 +35,9 @@ export class ObjectStore {
 
 	containsObjectWithPath(path: string): Promise<boolean> {
 		return new Promise((resolve, reject) => {
-			this.connection.get("SELECT COUNT(*) from object WHERE path = ?", path)
+			this.connection.get("SELECT COUNT(*) AS count from object WHERE path = ?", path)
 				.then(result => {
-					console.log(result);
-					resolve(!!result);
+					resolve(result.count !== 0);
 				})
 				.catch(err => reject(err));
 		});
