@@ -1,6 +1,8 @@
 import * as db from 'sqlite';
 import * as path from 'path';
 
+const CREATE_TABLE_SQL = 'CREATE TABLE IF NOT EXISTS "object" ( `uuid` TEXT, `created` INTEGER, `modified` INTEGER, `path` TEXT, `file` BLOB, PRIMARY KEY(`uuid`) )';
+
 export class ObjectStore {
 	private name: string = "objects.sqlite";
 	private connection: db.Database;
@@ -23,7 +25,9 @@ export class ObjectStore {
 			db.open(this.getFilePath())
 				.then(connection => {
 					this.connection = connection;
-					resolve();
+					this.connection.exec(CREATE_TABLE_SQL)
+						.then(() => resolve())
+						.catch(err => reject(err))
 				})
 				.catch(err => reject(err))
 		})
