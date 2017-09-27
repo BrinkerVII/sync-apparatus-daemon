@@ -13,7 +13,7 @@
     "dev-server": {
       "command": "concurrently \"gulp watch\" \"nodemon dist/index.js\" -n \"BUILD,SERVER\"",
       "env": {
-        "DEBUG": "sync-apparatus"
+        "DEBUG": "*"
       }
     },
     "run-debug": {
