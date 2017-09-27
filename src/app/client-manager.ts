@@ -1,6 +1,8 @@
 import * as debug from 'debug';
 import { Client } from './classes/client';
 
+let d = debug("sync-apparatus:client-manager");
+
 export class ClientManager {
 	private static instance: ClientManager = new ClientManager();
 	public static getInstance(): ClientManager {
@@ -12,7 +14,7 @@ export class ClientManager {
 	public newClient(name: string): Client {
 		let client = new Client(name);
 		let clientString = `Added new client '${client.getName()}' (${client.getId()})`;
-		debug(clientString);
+		d(clientString);
 		
 		this.clients.push(client);
 		return client;

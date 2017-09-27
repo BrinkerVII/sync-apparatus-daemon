@@ -3,7 +3,7 @@ import * as debug from 'debug';
 
 import { App } from './app/app';
 let expressApp = App.getInstance().getExpressApplication();
-debug('ts-express:server');
+let d = debug('sync-apparatus:index');
 
 const PORT: number = Number.parseInt(process.env.PORT) || 3000;
 expressApp.set("port", PORT);
@@ -31,5 +31,5 @@ server.on("listening", () => {
 	let address = server.address();
 	let bindString = `${address.address}:${address.port}`;
 	
-	debug(`Listening on ${bindString}`);
+	d(`Listening on '${bindString}'`);
 })

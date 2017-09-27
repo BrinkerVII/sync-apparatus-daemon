@@ -1,6 +1,8 @@
 import * as path from 'path';
 import * as debug from 'debug';
 
+let d = debug("sync-apparatus:variables")
+
 export class Variables {
 	public static projectBasePath: string = "";
 }
@@ -13,4 +15,4 @@ if (process.platform === "win32") {
 }
 path.normalize(Variables.projectBasePath);
 
-debug(`Using project base path ${Variables.projectBasePath}`);
+d(`Using project base path ${Variables.projectBasePath}`);

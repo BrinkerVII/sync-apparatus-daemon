@@ -5,6 +5,8 @@ import * as fs from 'fs-extra-promise';
 import * as rimraf from 'rimraf';
 import * as debug from 'debug';
 
+let d = debug("sync-apparatus:project");
+
 export class Project {
 	private name: string;
 	private fspath: string;
@@ -46,7 +48,7 @@ export class Project {
 
 	public getObjectStore(): ObjectStore {
 		if (!this.objectStore) {
-			debug("No object store");
+			d("No object store");
 		}
 		return this.objectStore
 	}
