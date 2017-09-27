@@ -36,4 +36,23 @@ export class ProjectManager {
 				.catch(err => reject(err));
 		});
 	}
+
+	public getProjectByName(name: string): Promise<Project> {
+		return new Promise((resolve, reject) => {
+			let project: Project;
+
+			for (let existingProject of this.projects) {
+				if (existingProject.getName() === name) {
+					project = existingProject;
+					return;
+				}
+			}
+
+			if (project) {
+				resolve(project);
+			} else {
+				reject(new Error("Project does not exist"));
+			}
+		});
+	}
 }
