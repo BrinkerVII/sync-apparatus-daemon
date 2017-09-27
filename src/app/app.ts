@@ -4,6 +4,7 @@ import * as bodyParser from 'body-parser';
 import { HelloWorldHandler } from './handlers/hello-world-handler';
 import { EventHandler } from './handlers/event-handler';
 import { AnnounceHandler } from './handlers/announce-handler';
+import { ClientHandler } from './handlers/client-handler';
 
 export class App {
 	private static instance: App = new App();
@@ -39,7 +40,8 @@ export class App {
 		let routeHandlers: any[] = [
 			new HelloWorldHandler(),
 			new EventHandler(),
-			new AnnounceHandler()
+			new AnnounceHandler(),
+			new ClientHandler()
 		];
 		
 		for (let handler of routeHandlers) {

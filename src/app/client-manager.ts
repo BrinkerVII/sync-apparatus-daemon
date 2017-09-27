@@ -14,6 +14,11 @@ export class ClientManager {
 		let clientString = `Added new client '${client.getName()}' (${client.getId()})`;
 		debug(clientString);
 		
+		this.clients.push(client);
 		return client;
+	}
+	
+	public getClients(): Client[] {
+		return this.clients;
 	}
 }
