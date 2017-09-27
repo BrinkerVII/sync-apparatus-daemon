@@ -46,7 +46,7 @@
     "gulp-clean": "^0.3.2",
     "gulp-typescript": "^3.2.2",
     "nodemon": "^1.12.1",
-    "typescript": "^2.5.2"
+    "typescript": "^2.5.3"
   },
   "dependencies": {
     "body-parser": "^1.18.2",

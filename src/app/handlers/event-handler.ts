@@ -1,7 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { BaseHandler } from './base-handler';
 import { SyncEvent } from '../classes/sync-event';
-import { EventProcessor } from '../event-processor';
+import { EVENT_TYPES } from '../constants/event-types';
+
+let handlerFunctions = {};
+
+handlerFunctions[EVENT_TYPES.PUSH_FILE] = (event: SyncEvent) => {
+	
+};
 
 export class EventHandler extends BaseHandler {
 	path = "/event";
@@ -11,7 +17,10 @@ export class EventHandler extends BaseHandler {
 
 		if (events.forEach) { // Determines if the post body really is an array
 			events.forEach(event => {
-				EventProcessor.getInstance().pushEvent(event);
+				if (typeof event.type === "string") {
+					let f: Function = handlerFunctions[event.type];
+					if (f) { f(event); }
+				}
 			});
 			return;
 		}

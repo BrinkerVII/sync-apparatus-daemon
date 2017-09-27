@@ -1,3 +1,3 @@
 export const EVENT_TYPES = {
-	PUSH: "file-push",
+	PUSH_FILE: "file-push",
 }
