@@ -16,31 +16,11 @@ export class Project {
 		return this.name;
 	}
 
-	public fsInit(): Promise<void> {
+	public init(): Promise<void> {
 		console.log(this.fspath);
 
 		return new Promise<void>((resolve, reject) => {
-			fs.isDirectoryAsync(this.fspath)
-				.then((pe) => {
-					if (pe) {
-						rimraf(this.fspath, (err) => {
-							if (err) {
-								reject(err);
-							} else {
-								resolve();
-							}
-						});
-					} else {
-						fs.mkdirs(this.fspath)
-							.then(() => resolve())
-							.catch(err => reject(err));
-					}
-				})
-				.catch(err => {
-					fs.mkdirsAsync(this.fspath)
-						.then(() => resolve())
-						.catch(err => reject(err));
-				});
+			resolve();
 		});
 	}
 }

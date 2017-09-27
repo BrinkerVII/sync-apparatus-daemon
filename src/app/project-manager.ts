@@ -28,7 +28,7 @@ export class ProjectManager {
 			}
 
 			let project = new Project(name);
-			project.fsInit()
+			project.init()
 				.then(() => {
 					this.projects.push(project);
 					resolve(project)
