@@ -1,5 +1,7 @@
+import { ObjectStoreItem } from '../model/object-store-item';
 import * as db from 'sqlite';
 import * as path from 'path';
+import * as uuid from 'uuid';
 
 const CREATE_TABLE_SQL = 'CREATE TABLE IF NOT EXISTS "object" ( `uuid` TEXT, `created` INTEGER, `modified` INTEGER, `path` TEXT, `file` BLOB, PRIMARY KEY(`uuid`) )';
 
@@ -18,6 +20,20 @@ export class ObjectStore {
 			this.name += ".sqlite";
 		}
 		return path.join(this.directory, this.name);
+	}
+
+	private generateObjectStoreItem(path: string, blob: string): ObjectStoreItem {
+		let now = (new Date()).getTime();
+
+		let item: ObjectStoreItem = {
+			uuid: uuid.v4(),
+			created: now,
+			modified: now,
+			path: path,
+			file: blob
+		};
+
+		return item;
 	}
 
 	init(): Promise<void> {
@@ -43,7 +59,7 @@ export class ObjectStore {
 		});
 	}
 
-	retrieveByPath(path: string): Promise<string> {
+	retrieveContentByPath(path: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			this.connection.get("SELECT content file from object WHERE path = ?", path)
 				.then(result => {
@@ -56,9 +72,31 @@ export class ObjectStore {
 	storeByPath(path: string, blob: string): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			this.containsObjectWithPath(path)
-				.then(result => {
-					console.log(result);
-					resolve();
+				.then(containsObject => {
+					if (containsObject) {
+						let run = this.connection.run("UPDATE object SET file = ?, modified = ? WHERE path = ?", [
+							blob,
+							(new Date()).getTime(),
+							path
+						]);
+
+						run
+							.then(() => resolve())
+							.catch(err => reject(err));
+					} else {
+						let item = this.generateObjectStoreItem(path, blob);
+						let run = this.connection.run("INSERT INTO object (uuid, created, modified, path, file) VALUES(?, ?, ?, ?, ?)", [
+							item.uuid,
+							item.created,
+							item.modified,
+							item.path,
+							item.file
+						]);
+
+						run
+							.then(() => resolve())
+							.catch(err => reject(err));
+					}
 				})
 				.catch(err => reject(err));
 		});
