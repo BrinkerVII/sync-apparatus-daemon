@@ -3,6 +3,7 @@ import { ObjectStore } from './object-store';
 import * as path from 'path';
 import * as fs from 'fs-extra-promise';
 import * as rimraf from 'rimraf';
+import * as debug from 'debug';
 
 export class Project {
 	private name: string;
@@ -41,5 +42,12 @@ export class Project {
 						.catch(err => reject(err))
 				})
 		});
+	}
+
+	public getObjectStore(): ObjectStore {
+		if (!this.objectStore) {
+			debug("No object store");
+		}
+		return this.objectStore
 	}
 }
