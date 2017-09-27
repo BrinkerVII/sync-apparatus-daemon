@@ -5,6 +5,7 @@ import { HelloWorldHandler } from './handlers/hello-world-handler';
 import { EventHandler } from './handlers/event-handler';
 import { AnnounceHandler } from './handlers/announce-handler';
 import { ClientHandler } from './handlers/client-handler';
+import { ProjectHandler } from './handlers/project-handler';
 
 export class App {
 	private static instance: App = new App();
@@ -41,7 +42,8 @@ export class App {
 			new HelloWorldHandler(),
 			new EventHandler(),
 			new AnnounceHandler(),
-			new ClientHandler()
+			new ClientHandler(),
+			new ProjectHandler()
 		];
 		
 		for (let handler of routeHandlers) {

@@ -40,6 +40,8 @@
     "@types/morgan": "^1.7.33",
     "@types/node": "^8.0.31",
     "@types/uuid": "^3.4.2",
+    "@types/fs-extra-promise": "^1.0.2",
+    "@types/rimraf": "^2.0.2",
     "better-npm-run": "^0.1.0",
     "concurrently": "^3.5.0",
     "gulp": "^3.9.1",
@@ -52,7 +54,9 @@
     "body-parser": "^1.18.2",
     "debug": "^3.0.1",
     "express": "^4.15.5",
+    "fs-extra-promise": "^1.0.1",
     "morgan": "^1.8.2",
+    "rimraf": "^2.6.2",
     "uuid": "^3.1.0"
   }
 }
