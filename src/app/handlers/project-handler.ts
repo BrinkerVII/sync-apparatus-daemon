@@ -21,7 +21,7 @@ export class ProjectHandler extends BaseHandler {
 			})
 			.catch(err => {
 				console.error(err);
-				response.status(500).json(err);
+				response.status(500).json(err.toString());
 			});
 	}
 }
