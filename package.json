@@ -13,13 +13,13 @@
     "dev-server": {
       "command": "concurrently \"gulp watch\" \"nodemon dist/index.js\" -n \"BUILD,SERVER\"",
       "env": {
-        "DEBUG": "ts-express"
+        "DEBUG": "*"
       }
     },
     "run-debug": {
       "command": "node ./dist/index.js",
       "env": {
-        "DEBUG": "ts-express"
+        "DEBUG": "*"
       }
     }
   },
