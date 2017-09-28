@@ -5,7 +5,13 @@ export class HelloWorldHandler extends BaseHandler {
 	path = "/hello";
 
 	get(request: Request, response: Response, next: NextFunction) {
-		response.json({ message: (new Date()).toLocaleString() })
+		let body = {
+			defaultString: "sync-apparatus-daemon",
+			serverName: "Sync Apparatus",
+			serverTime: (new Date()).toLocaleString()
+		}
+		
+		response.json(body);
 	}
 
 	post(request: Request, response: Response, next: NextFunction) {
