@@ -69,8 +69,8 @@ export class ObjectStore {
 		});
 	}
 
-	storeByPath(path: string, blob: string): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
+	storeByPath(path: string, blob: string): Promise<ObjectStoreItem> {
+		return new Promise((resolve, reject) => {
 			this.containsObjectWithPath(path)
 				.then(containsObject => {
 					if (containsObject) {
@@ -81,7 +81,13 @@ export class ObjectStore {
 						]);
 
 						run
-							.then(() => resolve())
+							.then(() => {
+								this.connection.get("SELECT * FROM object WHERE path = ?", path)
+									.then(result => {
+										resolve(result);
+									})
+									.catch(err => reject(err));
+							})
 							.catch(err => reject(err));
 					} else {
 						let item = this.generateObjectStoreItem(path, blob);
@@ -94,7 +100,7 @@ export class ObjectStore {
 						]);
 
 						run
-							.then(() => resolve())
+							.then(() => resolve(item))
 							.catch(err => reject(err));
 					}
 				})

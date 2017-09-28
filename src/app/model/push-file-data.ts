@@ -3,6 +3,7 @@ export class PushFileData {
 	contents: string;
 	project: string;
 	encoding: string;
+	clientToken?: string;
 
 	public static isSane(data?: PushFileData) {
 		if (!data) {
@@ -14,6 +15,10 @@ export class PushFileData {
 		sane = sane && typeof data.path === "string";
 		sane = sane && typeof data.project === "string";
 		sane = sane && typeof data.encoding === "string";
+		
+		if (data.clientToken) {
+			sane = sane && typeof data.clientToken === "string";
+		}
 
 		return sane;
 	}

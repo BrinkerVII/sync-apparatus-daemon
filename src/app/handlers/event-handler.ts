@@ -5,6 +5,8 @@ import { PushFileData } from '../model/push-file-data';
 import { EVENT_TYPES } from '../constants/event-types';
 import { ProjectManager } from '../project-manager';
 import * as debug from 'debug';
+import { Change } from '../classes/change';
+import { ClientManager } from '../client-manager';
 
 let d = debug("sync-apparatus:event-handler");
 let handlerFunctions = {};
@@ -18,7 +20,10 @@ handlerFunctions[EVENT_TYPES.PUSH_FILE] = (event: SyncEvent) => {
 					PushFileData.decodeData(data)
 						.then(decodedData => {
 							project.getObjectStore().storeByPath(data.path, decodedData)
-								.then(() => resolve())
+								.then((objectStoreItem) => {
+									ClientManager.getInstance().replicateChange(new Change(objectStoreItem));
+									resolve();
+								})
 								.catch(err => reject(err));
 						})
 						.catch(err => reject(err));
