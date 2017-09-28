@@ -76,4 +76,11 @@ export class Client {
 
 		return changeList;
 	}
+	
+	public removeChange(change: Change) {
+		let index = this.changes.indexOf(change);
+		if (index >= 0) {
+			this.changes.splice(index);
+		}
+	}
 }

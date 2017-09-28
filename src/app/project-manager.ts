@@ -3,6 +3,7 @@ import { Project } from './classes/project';
 import * as debug from 'debug';
 import { Client } from './classes/client';
 import { Change } from './classes/change';
+import { ClientManager } from './client-manager';
 
 let d = debug("sync-apparatus:project-manager");
 
@@ -70,5 +71,31 @@ export class ProjectManager {
 				})
 				.catch(err => console.error(err));
 		}
+	}
+
+	public getProjectList(): string[] {
+		let projectList: string[] = [];
+
+		for (let project of this.projects) {
+			projectList.push(project.getName());
+		}
+
+		return projectList;
+	}
+
+	public removeProject(project: Project): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			project.deinit()
+				.then(() => {
+					let index = this.projects.indexOf(project);
+					if (index >= 0) {
+						this.projects.splice(index);
+						ClientManager.getInstance().removeChangesOfProject(project);
+					}
+					
+					resolve();
+				})
+				.catch(err => reject(err));
+		});
 	}
 }

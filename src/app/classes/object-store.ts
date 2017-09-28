@@ -49,6 +49,12 @@ export class ObjectStore {
 		})
 	}
 
+	deinit(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			this.connection.close().then(resolve).catch(reject);
+		});
+	}
+
 	containsObjectWithPath(path: string): Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			this.connection.get("SELECT COUNT(*) AS count from object WHERE path = ?", path)
@@ -107,7 +113,7 @@ export class ObjectStore {
 				.catch(err => reject(err));
 		});
 	}
-	
+
 	getAllObjects(): Promise<ObjectStoreItem[]> {
 		return new Promise((resolve, reject) => {
 			this.connection.all("SELECT * from object")

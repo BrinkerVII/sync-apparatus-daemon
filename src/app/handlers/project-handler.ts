@@ -7,7 +7,7 @@ export class ProjectHandler extends BaseHandler {
 	public path = "/project";
 
 	get(request: Request, response: Response, next: NextFunction) {
-
+		response.json(ProjectManager.getInstance().getProjectList());
 	}
 
 	post(request: Request, response: Response, next: NextFunction) {
@@ -23,5 +23,25 @@ export class ProjectHandler extends BaseHandler {
 				console.error(err);
 				response.status(500).json(err.toString());
 			});
+	}
+
+	delete(request: Request, response: Response, next: NextFunction) {
+		if (!Util.validateParameters(request, response, { name: "string" })) {
+			return;
+		}
+
+		let sendError = (err) => {
+			response.status(500).json(err.toString())
+		}
+
+		ProjectManager.getInstance().getProjectByName(request.body.name)
+			.then(project => {
+				ProjectManager.getInstance().removeProject(project)
+					.then(() => {
+						response.status(200).send("OK");
+					})
+					.catch(err => sendError(err));
+			})
+			.catch(err => sendError(err));
 	}
 }

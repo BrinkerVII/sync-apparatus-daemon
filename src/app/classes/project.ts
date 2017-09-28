@@ -2,8 +2,8 @@ import { Variables } from '../variables';
 import { ObjectStore } from './object-store';
 import * as path from 'path';
 import * as fs from 'fs-extra-promise';
-import * as rimraf from 'rimraf';
 import * as debug from 'debug';
+import * as rimraf from 'rimraf';
 
 let d = debug("sync-apparatus:project");
 
@@ -43,6 +43,22 @@ export class Project {
 						})
 						.catch(err => reject(err))
 				})
+		});
+	}
+
+	public deinit(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			this.getObjectStore().deinit()
+				.then(() => {
+					rimraf(this.fspath, (err) => {
+						if (err) {
+							reject(err);
+						} else {
+							resolve();
+						}
+					});
+				})
+				.catch(reject);
 		});
 	}
 

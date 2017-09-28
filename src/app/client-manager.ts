@@ -1,6 +1,7 @@
 import * as debug from 'debug';
 import { Client } from './classes/client';
 import { Change } from './classes/change';
+import { Project } from './classes/project';
 
 let d = debug("sync-apparatus:client-manager");
 
@@ -70,6 +71,24 @@ export class ClientManager {
 
 			if (replicate) {
 				client.addChange(change);
+			}
+		}
+	}
+
+	public removeChangesOfProject(project: Project) {
+		let projectName = project.getName();
+		
+		for (let client of this.clients) {
+			let rubbish: Change[] = [];
+			
+		    for (let change of client.getChanges()) {
+		        if (change.getProject().getName() === projectName) {
+					rubbish.push(change);
+				}
+		    }
+			
+			for (let change of rubbish) {
+			    client.removeChange(change);
 			}
 		}
 	}
