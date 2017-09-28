@@ -1,6 +1,8 @@
 import { Variables } from './variables';
 import { Project } from './classes/project';
 import * as debug from 'debug';
+import { Client } from './classes/client';
+import { Change } from './classes/change';
 
 let d = debug("sync-apparatus:project-manager");
 
@@ -56,5 +58,17 @@ export class ProjectManager {
 				reject(new Error("Project does not exist"));
 			}
 		});
+	}
+
+	public addAllObjectsToClient(client: Client) {
+		for (let project of this.projects) {
+			project.getObjectStore().getAllObjects()
+				.then(objects => {
+					objects.forEach(object => {
+						client.addChange(new Change(project, object));
+					});
+				})
+				.catch(err => console.error(err));
+		}
 	}
 }

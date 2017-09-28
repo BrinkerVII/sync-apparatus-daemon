@@ -107,4 +107,14 @@ export class ObjectStore {
 				.catch(err => reject(err));
 		});
 	}
+	
+	getAllObjects(): Promise<ObjectStoreItem[]> {
+		return new Promise((resolve, reject) => {
+			this.connection.all("SELECT * from object")
+				.then(objects => {
+					resolve(objects);
+				})
+				.catch(err => reject(err));
+		});
+	}
 }

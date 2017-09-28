@@ -6,6 +6,7 @@ import { EventHandler } from './handlers/event-handler';
 import { AnnounceHandler } from './handlers/announce-handler';
 import { ClientHandler } from './handlers/client-handler';
 import { ProjectHandler } from './handlers/project-handler';
+import { ChangesHandler } from './handlers/changes-handler';
 
 export class App {
 	private static instance: App = new App();
@@ -26,7 +27,7 @@ export class App {
 		this.express.use(bodyParser.json());
 		this.express.use(bodyParser.urlencoded({ extended: false }));
 	}
-	
+
 	private registerRoute(router: express.Router, handler: any, method: string) {
 		if (typeof handler[method] === "function") {
 			router[method](handler.path, (request, response, next) => {
@@ -43,9 +44,10 @@ export class App {
 			new EventHandler(),
 			new AnnounceHandler(),
 			new ClientHandler(),
-			new ProjectHandler()
+			new ProjectHandler(),
+			new ChangesHandler()
 		];
-		
+
 		for (let handler of routeHandlers) {
 			if (typeof handler.path === "string") {
 				this.registerRoute(router, handler, "get");
