@@ -77,19 +77,31 @@ export class ClientManager {
 
 	public removeChangesOfProject(project: Project) {
 		let projectName = project.getName();
-		
+
 		for (let client of this.clients) {
 			let rubbish: Change[] = [];
-			
-		    for (let change of client.getChanges()) {
-		        if (change.getProject().getName() === projectName) {
+
+			for (let change of client.getChanges()) {
+				if (change.getProject().getName() === projectName) {
 					rubbish.push(change);
 				}
-		    }
-			
+			}
+
 			for (let change of rubbish) {
-			    client.removeChange(change);
+				client.removeChange(change);
 			}
 		}
+	}
+
+	public removeClient(client: Client): Promise<void> {
+		return new Promise((resolve, reject) => {
+			let index = this.clients.indexOf(client);
+			if (index >= 0) {
+				this.clients.splice(index);
+				resolve();
+			} else {
+				reject(new Error("Client unknown"));
+			}
+		});
 	}
 }

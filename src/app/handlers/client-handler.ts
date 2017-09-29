@@ -1,6 +1,7 @@
 import { BaseHandler } from './base-handler';
 import { Request, Response, NextFunction } from 'express';
 import { ClientManager } from '../client-manager';
+import { Util } from '../util';
 
 export class ClientHandler extends BaseHandler {
 	public path = "/client";
@@ -15,5 +16,23 @@ export class ClientHandler extends BaseHandler {
 		}
 
 		response.json(responseList);
+	}
+
+	delete(request: Request, response: Response, next: NextFunction) {
+		if (!Util.validateParameters(request, response, { clienToken: "string" })) {
+			return;
+		}
+
+		let sendError = (err) => {
+			response.status(500).json(err.toString());
+		}
+
+		ClientManager.getInstance().getClientById(request.body.clientToken)
+			.then(client => {
+				ClientManager.getInstance().removeClient(client)
+					.then(() => response.status(200).json("OK"))
+					.catch(sendError);
+			})
+			.catch(sendError);
 	}
 }
