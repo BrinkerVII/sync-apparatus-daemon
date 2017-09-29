@@ -73,6 +73,7 @@ export class EventHandler extends BaseHandler {
 			let timer = setInterval(() => {
 				if (processedEvents >= events.length) {
 					if (errors.length > 0) {
+						console.error(errors);
 						response.status(500).json(errors);
 					} else {
 						response.status(200).json("OK");
