@@ -44,27 +44,11 @@ export class ClientManager {
 		});
 	}
 
-	public replicateChange(change: Change, sourceClient?: string | Client) {
-		if (sourceClient) {
-			let realClient: Client;
-			if (typeof sourceClient === "string") {
-				for (let client of this.clients) {
-					if (client.getId() === sourceClient) {
-						realClient = client;
-					}
-				}
-			}
-
-			if (realClient) {
-				sourceClient = realClient;
-			}
-		}
-		let sourceClientO: Client = <Client>sourceClient;
-
+	public replicateChange(change: Change, sourceClient?: Client) {
 		for (let client of this.clients) {
 			let replicate = true;
-			if (sourceClient && sourceClientO) {
-				if (sourceClientO.getId() === client.getId()) {
+			if (sourceClient) {
+				if (sourceClient.getId() === client.getId()) {
 					replicate = false;
 				}
 			}

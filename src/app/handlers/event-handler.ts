@@ -21,8 +21,12 @@ handlerFunctions[EVENT_TYPES.PUSH_FILE] = (event: SyncEvent) => {
 						.then(decodedData => {
 							project.getObjectStore().storeByPath(data.path, decodedData)
 								.then((objectStoreItem) => {
-									ClientManager.getInstance().replicateChange(new Change(project, objectStoreItem), event.clientToken);
-									resolve();
+									ClientManager.getInstance().getClientById(event.clientToken)
+										.then(client => {
+											ClientManager.getInstance().replicateChange(new Change(project, objectStoreItem), client);
+											resolve();
+										})
+										.catch(reject);
 								})
 								.catch(err => reject(err));
 						})
