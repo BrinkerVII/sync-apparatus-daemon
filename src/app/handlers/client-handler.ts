@@ -19,7 +19,7 @@ export class ClientHandler extends BaseHandler {
 	}
 
 	delete(request: Request, response: Response, next: NextFunction) {
-		if (!Util.validateParameters(request, response, { clienToken: "string" })) {
+		if (!Util.validateParameters(request, response, { clientToken: "string" })) {
 			return;
 		}
 
