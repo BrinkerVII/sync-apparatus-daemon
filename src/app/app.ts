@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
+import * as methodOverride from 'method-override';
 import { HelloWorldHandler } from './handlers/hello-world-handler';
 import { EventHandler } from './handlers/event-handler';
 import { AnnounceHandler } from './handlers/announce-handler';
@@ -26,6 +27,7 @@ export class App {
 		this.express.use(logger("dev"));
 		this.express.use(bodyParser.json());
 		this.express.use(bodyParser.urlencoded({ extended: false }));
+		this.express.use(methodOverride("X-HTTP-Method-Override"));
 	}
 
 	private registerRoute(router: express.Router, handler: any, method: string) {
