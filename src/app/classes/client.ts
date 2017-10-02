@@ -11,7 +11,7 @@ export class Client {
 
 	constructor(name: string) {
 		this.name = name;
-		
+
 		ProjectManager.getInstance().addAllObjectsToClient(this);
 	}
 
@@ -47,6 +47,7 @@ export class Client {
 	public addChange(change: Change) {
 		this.removeChangesWithPath(change.getObjectStoreItem().path);
 		this.changes.push(change);
+		change.incrementDependencies();
 	}
 
 	public getChanges(): Change[] {
@@ -76,11 +77,31 @@ export class Client {
 
 		return changeList;
 	}
-	
+
 	public removeChange(change: Change) {
 		let index = this.changes.indexOf(change);
 		if (index >= 0) {
 			this.changes.splice(index);
 		}
+		
+		change.decrementDepencendies();
+	}
+
+	public getChangeById(changeId: string): Promise<Change> {
+		return new Promise((resolve, reject) => {
+			let selectedChange: Change;
+
+			for (let change of this.changes) {
+				if (change.getObjectStoreItem().uuid === changeId) {
+					selectedChange = change;
+				}
+			}
+
+			if (selectedChange) {
+				resolve(selectedChange);
+			} else {
+				reject(new Error("Change unknown"));
+			}
+		});
 	}
 }

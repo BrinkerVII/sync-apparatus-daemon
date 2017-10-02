@@ -8,6 +8,7 @@ import { AnnounceHandler } from './handlers/announce-handler';
 import { ClientHandler } from './handlers/client-handler';
 import { ProjectHandler } from './handlers/project-handler';
 import { ChangesHandler } from './handlers/changes-handler';
+import { PostOfficeHandler } from './handlers/post-office-handler';
 
 export class App {
 	private static instance: App = new App();
@@ -47,7 +48,8 @@ export class App {
 			new AnnounceHandler(),
 			new ClientHandler(),
 			new ProjectHandler(),
-			new ChangesHandler()
+			new ChangesHandler(),
+			new PostOfficeHandler()
 		];
 
 		for (let handler of routeHandlers) {
