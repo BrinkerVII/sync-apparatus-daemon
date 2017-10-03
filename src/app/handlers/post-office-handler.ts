@@ -15,7 +15,7 @@ export class PostOfficeHandler extends BaseHandler {
 			.then(client => {
 				client.getChangeById(request.params.changeId)
 					.then(change => {
-						response.status(200).send(change.getObjectStoreItem().file);
+						response.status(200).json(change.export());
 					})
 					.catch(sendError);
 			})

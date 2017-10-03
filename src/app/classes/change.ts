@@ -28,4 +28,13 @@ export class Change {
 		this.dependencies -= amount;
 		return this.dependencies;
 	}
+	
+	public export(): any {
+		let exportedObject = {
+			path: this.objectStoreItem.path,
+			file: this.objectStoreItem.file
+		}
+		
+		return exportedObject;
+	}
 }
