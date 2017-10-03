@@ -7,6 +7,7 @@ import { ProjectManager } from '../project-manager';
 import * as debug from 'debug';
 import { Change } from '../classes/change';
 import { ClientManager } from '../client-manager';
+import { CHANGE_TYPES } from '../constants/change-types';
 
 let d = debug("sync-apparatus:event-handler");
 let handlerFunctions = {};
@@ -23,7 +24,7 @@ handlerFunctions[EVENT_TYPES.PUSH_FILE] = (event: SyncEvent) => {
 								.then((objectStoreItem) => {
 									ClientManager.getInstance().getClientById(event.clientToken)
 										.then(client => {
-											ClientManager.getInstance().replicateChange(new Change(project, objectStoreItem), client);
+											ClientManager.getInstance().replicateChange(new Change(project, objectStoreItem, CHANGE_TYPES.ADD), client);
 											resolve();
 										})
 										.catch(reject);
