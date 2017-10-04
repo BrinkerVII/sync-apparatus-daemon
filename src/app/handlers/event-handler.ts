@@ -24,7 +24,14 @@ handlerFunctions[EVENT_TYPES.PUSH_FILE] = (event: SyncEvent) => {
 								.then((objectStoreItem) => {
 									ClientManager.getInstance().getClientById(event.clientToken)
 										.then(client => {
-											ClientManager.getInstance().replicateChange(new Change(project, objectStoreItem, CHANGE_TYPES.ADD), client);
+											ClientManager
+												.getInstance()
+												.replicateChange(new Change(
+													project,
+													objectStoreItem,
+													CHANGE_TYPES.ADD),
+												client
+												);
 											resolve();
 										})
 										.catch(reject);
