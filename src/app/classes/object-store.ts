@@ -114,6 +114,24 @@ export class ObjectStore {
 		});
 	}
 
+	deleteByPath(path: string): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			this.containsObjectWithPath(path)
+				.then((containsObject) => {
+					if (containsObject) {
+						let run = this.connection.run("DELETE FROM object WHERE path = ?", [path]);
+
+						run
+							.then(() => resolve())
+							.catch(reject);
+					} else {
+						reject(new Error("Path does not exist in object store"));
+					}
+				})
+				.catch(reject);
+		});
+	}
+
 	getAllObjects(): Promise<ObjectStoreItem[]> {
 		return new Promise((resolve, reject) => {
 			this.connection.all("SELECT * from object")

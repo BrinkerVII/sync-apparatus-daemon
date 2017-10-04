@@ -8,6 +8,7 @@ import * as debug from 'debug';
 import { Change } from '../classes/change';
 import { ClientManager } from '../client-manager';
 import { CHANGE_TYPES } from '../constants/change-types';
+import { DeleteFileData } from '../model/delete-file-data';
 
 let d = debug("sync-apparatus:event-handler");
 let handlerFunctions = {};
@@ -41,6 +42,26 @@ handlerFunctions[EVENT_TYPES.PUSH_FILE] = (event: SyncEvent) => {
 						.catch(err => reject(err));
 				})
 				.catch(err => reject(err));
+		} else {
+			reject(new Error("Data is insane"));
+		}
+	})
+};
+
+handlerFunctions[EVENT_TYPES.DELETE_FILE] = (event: SyncEvent) => {
+	return new Promise((resolve, reject) => {
+		let data: DeleteFileData = event.data;
+		if (DeleteFileData.isSane(data)) {
+			ProjectManager.getInstance().getProjectByName(data.project)
+				.then(project => {
+					project.getObjectStore().deleteByPath(data.path)
+						.then(() => {
+							ClientManager.getInstance().removeChangesWithPath(data.path);
+							resolve();
+						})
+						.catch(reject);
+				})
+				.catch(reject);
 		} else {
 			reject(new Error("Data is insane"));
 		}

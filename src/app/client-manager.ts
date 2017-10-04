@@ -76,6 +76,22 @@ export class ClientManager {
 			}
 		}
 	}
+	
+	public removeChangesWithPath(path: string) {
+		for (let client of this.clients) {
+		    let rubbish: Change[] = [];
+			
+			for (let change of client.getChanges()) {
+			    if (change.getObjectStoreItem().path === path) {
+					rubbish.push(change);
+				}
+			}
+			
+			for (let change of rubbish) {
+			    client.removeChange(change);
+			}
+		}
+	}
 
 	public removeClient(client: Client): Promise<void> {
 		return new Promise((resolve, reject) => {
