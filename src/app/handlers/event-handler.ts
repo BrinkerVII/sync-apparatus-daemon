@@ -9,6 +9,8 @@ import { Change } from '../classes/change';
 import { ClientManager } from '../client-manager';
 import { CHANGE_TYPES } from '../constants/change-types';
 import { DeleteFileData } from '../model/delete-file-data';
+import { ObjectStoreItem } from '../model/object-store-item';
+import * as uuid from 'uuid';
 
 let d = debug("sync-apparatus:event-handler");
 let handlerFunctions = {};
@@ -57,6 +59,22 @@ handlerFunctions[EVENT_TYPES.DELETE_FILE] = (event: SyncEvent) => {
 					project.getObjectStore().deleteByPath(data.path)
 						.then(() => {
 							ClientManager.getInstance().removeChangesWithPath(data.path);
+
+							let date = new Date().getTime();
+							let objectStoreItem = new ObjectStoreItem()
+							objectStoreItem.uuid = uuid.v4();
+							objectStoreItem.file = "";
+							objectStoreItem.path = data.path;
+							objectStoreItem.created = date;
+							objectStoreItem.modified = date;
+
+							ClientManager.getInstance()
+								.replicateChange(new Change(
+									project,
+									objectStoreItem,
+									CHANGE_TYPES.DELETE
+								));
+
 							resolve();
 						})
 						.catch(reject);
