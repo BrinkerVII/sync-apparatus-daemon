@@ -4,6 +4,7 @@ import * as debug from 'debug';
 import { Client } from './classes/client';
 import { Change } from './classes/change';
 import { ClientManager } from './client-manager';
+import { CHANGE_TYPES } from './constants/change-types';
 
 let d = debug("sync-apparatus:project-manager");
 
@@ -66,7 +67,7 @@ export class ProjectManager {
 			project.getObjectStore().getAllObjects()
 				.then(objects => {
 					objects.forEach(object => {
-						client.addChange(new Change(project, object));
+						client.addChange(new Change(project, object, CHANGE_TYPES.ADD));
 					});
 				})
 				.catch(err => console.error(err));
