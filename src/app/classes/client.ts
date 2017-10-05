@@ -6,7 +6,6 @@ import { ProjectManager } from '../project-manager';
 export interface ClientChange {
 	uuid: string;
 	length: number;
-	path: string;
 }
 
 export class Client {
@@ -76,8 +75,7 @@ export class Client {
 			if (includeChange) {
 				changeList.push({
 					uuid: objectStoreItem.uuid,
-					length: ObjectStoreItem.getFileLength(objectStoreItem),
-					path: objectStoreItem.path
+					length: ObjectStoreItem.getFileLength(objectStoreItem)
 				});
 			}
 		}
