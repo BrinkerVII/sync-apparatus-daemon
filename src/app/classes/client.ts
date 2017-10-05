@@ -3,6 +3,12 @@ import { Change } from './change';
 import { ObjectStoreItem } from '../model/object-store-item';
 import { ProjectManager } from '../project-manager';
 
+export interface ClientChange {
+	uuid: string;
+	length: number;
+	path: string;
+}
+
 export class Client {
 	private id: string = uuid.v4();
 	private name: string;
@@ -54,8 +60,8 @@ export class Client {
 		return this.changes;
 	}
 
-	public getChangeList(project?: string): { uuid: string; length: number }[] {
-		let changeList: { uuid: string; length: number }[] = [];
+	public getChangeList(project?: string): ClientChange[] {
+		let changeList: ClientChange[] = [];
 
 		for (let change of this.changes) {
 			let includeChange = true;
@@ -70,7 +76,8 @@ export class Client {
 			if (includeChange) {
 				changeList.push({
 					uuid: objectStoreItem.uuid,
-					length: ObjectStoreItem.getFileLength(objectStoreItem)
+					length: ObjectStoreItem.getFileLength(objectStoreItem),
+					path: objectStoreItem.path
 				});
 			}
 		}
@@ -83,7 +90,7 @@ export class Client {
 		if (index >= 0) {
 			this.changes.splice(index);
 		}
-		
+
 		change.decrementDepencendies();
 	}
 
