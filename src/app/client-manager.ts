@@ -76,26 +76,34 @@ export class ClientManager {
 			}
 		}
 	}
-	
+
 	public removeChangesWithPath(path: string) {
 		for (let client of this.clients) {
-		    let rubbish: Change[] = [];
-			
+			let rubbish: Change[] = [];
+
 			for (let change of client.getChanges()) {
-			    if (change.getObjectStoreItem().path === path) {
+				if (change.getObjectStoreItem().path === path) {
 					rubbish.push(change);
 				}
 			}
-			
+
 			for (let change of rubbish) {
-			    client.removeChange(change);
+				client.removeChange(change);
 			}
 		}
 	}
 
 	public removeClient(client: Client): Promise<void> {
 		return new Promise((resolve, reject) => {
-			let index = this.clients.indexOf(client);
+			let index = -1;
+
+			for (let i = 0; i < this.clients.length; i++) {
+				if (this.clients[i].getId() === client.getId()) {
+					index = i;
+					break;
+				}
+			}
+
 			if (index >= 0) {
 				this.clients.splice(index);
 				resolve();
