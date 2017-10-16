@@ -99,7 +99,7 @@ export class ClientManager {
 
 			for (let knownClient of this.clients) {
 				if (knownClient.getId() !== client.getId()) {
-					newClientsArray.push(client);
+					newClientsArray.push(knownClient);
 				}
 			}
 
