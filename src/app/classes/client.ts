@@ -9,13 +9,15 @@ export interface ClientChange {
 }
 
 export class Client {
-	private id: string = uuid.v4();
+	private id: string;
 	private name: string;
-	private creationTime: Date = new Date();
+	private creationTime: Date;
 	private changes: Change[] = [];
 
 	constructor(name: string) {
 		this.name = name;
+		this.id = uuid.v4();
+		this.creationTime = new Date();
 
 		ProjectManager.getInstance().addAllObjectsToClient(this);
 	}
