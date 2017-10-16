@@ -31,6 +31,7 @@ export class ProjectHandler extends BaseHandler {
 		}
 
 		let sendError = (err) => {
+			console.error(err);
 			response.status(500).json(err.toString())
 		}
 

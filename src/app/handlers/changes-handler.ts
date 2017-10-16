@@ -11,6 +11,7 @@ export class ChangesHandler extends BaseHandler {
 				response.json(client.getChangeList(request.params.project));
 			})
 			.catch(err => {
+				console.error(err);
 				response.status(403).json(err.toString());
 			});
 	}
