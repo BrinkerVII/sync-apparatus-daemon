@@ -95,21 +95,16 @@ export class ClientManager {
 
 	public removeClient(client: Client): Promise<void> {
 		return new Promise((resolve, reject) => {
-			let index = -1;
+			let newClientsArray: Client[] = [];
 
-			for (let i = 0; i < this.clients.length; i++) {
-				if (this.clients[i].getId() === client.getId()) {
-					index = i;
-					break;
+			for (let knownClient of this.clients) {
+				if (knownClient.getId() !== client.getId()) {
+					newClientsArray.push(client);
 				}
 			}
 
-			if (index >= 0) {
-				this.clients.splice(index);
-				resolve();
-			} else {
-				reject(new Error("Client unknown"));
-			}
+			this.clients = newClientsArray;
+			resolve();
 		});
 	}
 }
