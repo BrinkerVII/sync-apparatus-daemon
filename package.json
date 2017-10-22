@@ -11,13 +11,13 @@
   },
   "betterScripts": {
     "dev-server": {
-      "command": "concurrently \"gulp watch\" \"nodemon dist/index.js\" -n \"BUILD,SERVER\"",
+      "command": "concurrently \"gulp watch\" \"nodemon ./dist/run/run-daemon.js\" -n \"BUILD,SERVER\"",
       "env": {
         "DEBUG": "*"
       }
     },
     "run-debug": {
-      "command": "node ./dist/index.js",
+      "command": "node ./dist/run/run-daemon.js",
       "env": {
         "DEBUG": "*"
       }
