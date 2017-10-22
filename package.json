@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp clean && gulp build-all",
     "dev-server": "gulp clean && better-npm-run dev-server",
-    "run-debug": "npm run build && better-npm-run run-debug"
+    "run-debug": "npm run build && better-npm-run run-debug",
+    "do-publish": "npm run build && npm publish"
   },
   "betterScripts": {
     "dev-server": {
