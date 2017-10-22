@@ -11,10 +11,7 @@ export class Daemon {
 	private expressApp = App.getInstance().getExpressApplication();
 	private isListening: boolean = false;
 
-	constructor() {
-		// this.expressApp.set("port", PORT);
-		// this.server = http.createServer(this.expressApp);
-	}
+	constructor() { }
 
 	listen(): Daemon {
 		if (this.isListening) {
@@ -22,9 +19,9 @@ export class Daemon {
 			return this;
 		}
 		this.isListening = true;
-		
+
 		this.server = this.expressApp.listen(PORT);
-		
+
 		this.server.on("error", (error: NodeJS.ErrnoException) => {
 			if (error.syscall !== 'listen') throw error;
 			let bind = PORT.toString();
@@ -48,17 +45,17 @@ export class Daemon {
 
 			d(`Listening on '${bindString}'`);
 		});
-		
+
 		return this;
 	}
-	
+
 	stopListening() {
 		if (!this.isListening) {
 			d("Server is already not listening, ignoring stopListening call");
 			return;
 		}
 		this.isListening = false;
-		
+
 		this.server.close(param => {
 			d(`Server closed:: ${param}`);
 		});
