@@ -1,25 +1,15 @@
 import { ObjectStoreItem } from '../model/object-store-item';
-import * as db from 'sqlite';
+import { WheelShed, Wheel } from 'wheel-shed';
 import * as path from 'path';
 import * as uuid from 'uuid';
 
-const CREATE_TABLE_SQL = 'CREATE TABLE IF NOT EXISTS "object" ( `uuid` TEXT, `created` INTEGER, `modified` INTEGER, `path` TEXT, `file` BLOB, PRIMARY KEY(`uuid`) )';
-
 export class ObjectStore {
-	private name: string = "objects.sqlite";
-	private connection: db.Database;
+	private shed: WheelShed;
 
 	constructor(
 		private directory: string
 	) {
-
-	}
-
-	private getFilePath(): string {
-		if (!this.name.endsWith("sqlite")) {
-			this.name += ".sqlite";
-		}
-		return path.join(this.directory, this.name);
+		this.shed = new WheelShed(this.directory);
 	}
 
 	private generateObjectStoreItem(path: string, blob: string): ObjectStoreItem {
@@ -36,42 +26,60 @@ export class ObjectStore {
 		return item;
 	}
 
-	init(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			db.open(this.getFilePath())
-				.then(connection => {
-					this.connection = connection;
-					this.connection.exec(CREATE_TABLE_SQL)
-						.then(() => resolve())
-						.catch(err => reject(err))
-				})
-				.catch(err => reject(err))
-		})
+	private wheelToObjectStoreItemWithFile(wheel: Wheel, file: string): ObjectStoreItem {
+		let metadata = wheel.getMetadata();
+
+		return {
+			uuid: metadata.id,
+			created: metadata.created,
+			modified: metadata.modified,
+			path: metadata.name,
+			file: file
+		}
 	}
 
-	deinit(): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
-			this.connection.close().then(resolve).catch(reject);
+	private wheelToObjectStoreItem(wheel: Wheel): Promise<ObjectStoreItem> {
+		let metadata = wheel.getMetadata();
+
+		return new Promise<ObjectStoreItem>((resolve, reject) => {
+			wheel.getContent()
+				.then(content => {
+					resolve({
+						uuid: metadata.id,
+						created: metadata.created,
+						modified: metadata.modified,
+						path: metadata.name,
+						file: content
+					})
+				})
+				.catch(reject);
 		});
 	}
 
 	containsObjectWithPath(path: string): Promise<boolean> {
 		return new Promise((resolve, reject) => {
-			this.connection.get("SELECT COUNT(*) AS count from object WHERE path = ?", path)
-				.then(result => {
-					resolve(result.count !== 0);
+			this.shed.filter((wheel) => wheel.getName() === path)
+				.then(wheels => {
+					resolve(wheels.length > 0);
 				})
-				.catch(err => reject(err));
+				.catch(reject);
 		});
 	}
 
 	retrieveContentByPath(path: string): Promise<string> {
 		return new Promise((resolve, reject) => {
-			this.connection.get("SELECT content file from object WHERE path = ?", path)
-				.then(result => {
-					resolve(result.content);
+			this.shed.filter((wheel) => wheel.getName() === path)
+				.then(wheels => {
+					let wheel: Wheel = wheels[0];
+					if (wheel) {
+						wheel.getContent()
+							.then(contentString => resolve(contentString))
+							.catch(reject);
+					} else {
+						reject(new Error(`No wheel found with name ${path}`));
+					}
 				})
-				.catch(err => reject(err));
+				.catch(reject);
 		});
 	}
 
@@ -79,35 +87,35 @@ export class ObjectStore {
 		return new Promise((resolve, reject) => {
 			this.containsObjectWithPath(path)
 				.then(containsObject => {
+					let wheel: Wheel;
+
+					let doStore = () => {
+						if (wheel) {
+							wheel.setContent(blob)
+								.then(() => {
+									let osi = this.wheelToObjectStoreItemWithFile(wheel, blob)
+									resolve(osi);
+								})
+								.catch(reject);
+						} else {
+							reject(new Error(`Could not store to wheel with name ${path}`));
+						}
+					}
+
 					if (containsObject) {
-						let run = this.connection.run("UPDATE object SET file = ?, modified = ? WHERE path = ?", [
-							blob,
-							(new Date()).getTime(),
-							path
-						]);
-
-						run
-							.then(() => {
-								this.connection.get("SELECT * FROM object WHERE path = ?", path)
-									.then(result => {
-										resolve(result);
-									})
-									.catch(err => reject(err));
+						this.shed.filter((wheel) => wheel.getName() === path)
+							.then(wheels => {
+								wheel = wheels[0];
+								doStore();
 							})
-							.catch(err => reject(err));
+							.catch(reject);
 					} else {
-						let item = this.generateObjectStoreItem(path, blob);
-						let run = this.connection.run("INSERT INTO object (uuid, created, modified, path, file) VALUES(?, ?, ?, ?, ?)", [
-							item.uuid,
-							item.created,
-							item.modified,
-							item.path,
-							item.file
-						]);
-
-						run
-							.then(() => resolve(item))
-							.catch(err => reject(err));
+						try {
+							wheel = new Wheel(this.shed, true);
+							doStore();
+						} catch (e) {
+							reject(new Error(e));
+						}
 					}
 				})
 				.catch(err => reject(err));
@@ -116,16 +124,28 @@ export class ObjectStore {
 
 	deleteByPath(path: string): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
-			this.containsObjectWithPath(path)
-				.then((containsObject) => {
-					if (containsObject) {
-						let run = this.connection.run("DELETE FROM object WHERE path = ?", [path]);
+			this.shed.filter((wheel) => wheel.getName() === path)
+				.then(wheels => {
+					let res = 0; let rej = 0;
 
-						run
-							.then(() => resolve())
-							.catch(reject);
-					} else {
-						reject(new Error("Path does not exist in object store"));
+					let tryResolve = () => {
+						if (res >= wheels.length) {
+							resolve();
+						} else if (res + rej >= wheels.length) {
+							reject(new Error("Could not remove all wheels"));
+						}
+					}
+
+					for (let wheel of wheels) {
+						wheel.remove()
+							.then(() => {
+								res++;
+								tryResolve();
+							})
+							.catch(() => {
+								rej++;
+								tryResolve();
+							});
 					}
 				})
 				.catch(reject);
@@ -134,11 +154,33 @@ export class ObjectStore {
 
 	getAllObjects(): Promise<ObjectStoreItem[]> {
 		return new Promise((resolve, reject) => {
-			this.connection.all("SELECT * from object")
-				.then(objects => {
-					resolve(objects);
+			this.shed.filter(() => true)
+				.then(wheels => {
+					let osiarray: ObjectStoreItem[] = [];
+					let res = 0; let rej = 0;
+
+					let tryResolve = () => {
+						if (res >= wheels.length) {
+							resolve();
+						} else if (res + rej >= wheels.length) {
+							reject(new Error("Could not remove all wheels"));
+						}
+					}
+
+					for (let wheel of wheels) {
+						this.wheelToObjectStoreItem(wheel)
+							.then(osi => {
+								osiarray.push(osi);
+								res++;
+								tryResolve();
+							})
+							.catch(err => {
+								rej++;
+								tryResolve();
+							})
+					}
 				})
-				.catch(err => reject(err));
+				.catch(reject);
 		});
 	}
 }

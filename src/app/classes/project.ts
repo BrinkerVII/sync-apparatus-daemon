@@ -7,6 +7,8 @@ import * as rimraf from 'rimraf';
 
 let d = debug("sync-apparatus:project");
 
+const OBJECTSTORE_NAME = "object-store";
+
 export class Project {
 	private name: string;
 	private fspath: string;
@@ -26,10 +28,12 @@ export class Project {
 
 		return new Promise<void>((resolve, reject) => {
 			let initObjectStore = () => {
-				this.objectStore = new ObjectStore(this.fspath);
-				this.objectStore.init()
-					.then(() => resolve())
-					.catch(err => reject(err));
+				try {
+					this.objectStore = new ObjectStore(path.join(this.fspath, OBJECTSTORE_NAME));
+					resolve();
+				} catch (e) {
+					reject(e);
+				}
 			}
 
 			fs.isDirectoryAsync(this.fspath)
@@ -48,17 +52,13 @@ export class Project {
 
 	public deinit(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
-			this.getObjectStore().deinit()
-				.then(() => {
-					rimraf(this.fspath, (err) => {
-						if (err) {
-							reject(err);
-						} else {
-							resolve();
-						}
-					});
-				})
-				.catch(reject);
+			rimraf(this.fspath, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve();
+				}
+			});
 		});
 	}
 
