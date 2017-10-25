@@ -91,6 +91,7 @@ export class ObjectStore {
 
 					let doStore = () => {
 						if (wheel) {
+							wheel.setName(path);
 							wheel.setContent(blob)
 								.then(() => {
 									let osi = this.wheelToObjectStoreItemWithFile(wheel, blob)
