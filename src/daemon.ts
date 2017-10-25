@@ -13,18 +13,18 @@ export class Daemon {
 
 	constructor() { }
 
-	listen(): Daemon {
+	listen(port: number = PORT): Daemon {
 		if (this.isListening) {
 			d("Server already listening, ignoring listen call");
 			return this;
 		}
 		this.isListening = true;
 
-		this.server = this.expressApp.listen(PORT);
+		this.server = this.expressApp.listen(port);
 
 		this.server.on("error", (error: NodeJS.ErrnoException) => {
 			if (error.syscall !== 'listen') throw error;
-			let bind = PORT.toString();
+			let bind = port.toString();
 			switch (error.code) {
 				case 'EACCES':
 					console.error(`${bind} requires elevated privileges`);
